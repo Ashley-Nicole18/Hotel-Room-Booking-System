@@ -64,5 +64,38 @@ describe('place booking order', () => {
     expect(res.body.result.error).toContain('Something went wrong');
 });
 
+    it('should fail when room does not exist', async () => {
+    const roomId = new mongoose.Types.ObjectId().toHexString();
+    
+    Room.findById.mockResolvedValue(null);
+
+    const res = await request(app)
+      .post(`/api/v1/placed-booking-order/${roomId}`)
+      .send({ booking_dates: ['2026-03-01'] });
+
+    expect(res.statusCode).toBe(404); 
+
+    expect(res.body.result.error).toBeDefined();
+    expect(res.body.result.error.toLowerCase()).toContain('room');
+    expect(res.body.result.error.toLowerCase()).toContain('not exist');
+});
+
+    it('Edge Case: should fail when room is already booked', async () => {
+    const roomId = new mongoose.Types.ObjectId().toHexString();
+
+    Room.findById.mockResolvedValue({ 
+        _id: roomId, 
+        room_status: 'booked' 
+    });
+
+    const res = await request(app)
+      .post(`/api/v1/placed-booking-order/${roomId}`)
+      .send({ booking_dates: ['2026-03-01'] });
+
+    expect(res.statusCode).toBe(400); 
+    
+    expect(res.body.result.error).toBeDefined();
+    expect(res.body.result.error.toLowerCase()).toContain('already booked');
+});
 })
 
