@@ -33,3 +33,11 @@ audit.json
 
 # test report
 /coverage
+
+# Environment files
+.env.test
+
+# Project folders to ignore
+admin-panel/
+backend/
+frontend/
