@@ -5,7 +5,8 @@ const mongoose = require('mongoose')
 const MyQueryHelper = require('../configs/api.feature.js');
 
 jest.mock('../models/room.model.js');
-jest.mock('../configs/api.feature.js')
+jest.mock('../configs/api.feature.js');
+
 
 describe('get all rooms list (mocked)', () => {
 
@@ -53,9 +54,7 @@ describe('get all rooms list (mocked)', () => {
   expect(res.statusCode).toEqual(200);
   expect(res.body.result.data.rows.length).toBe(2);
   })
-});
 
-describe('get all rooms list sad path', () => {
   it('should return 500 if DB throws an error', async () => {
     Room.find.mockRejectedValue(new Error('DB failure'));
 
@@ -82,6 +81,73 @@ describe('get all rooms list sad path', () => {
     expect(res.body.result.data.total_rows).toBe(0);
     expect(res.body.result.data.rows.length).toEqual(0)
   })
+});
 
-})
+describe('getRoomByIdOrSlugName Controller', () => {
+  
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
+  const BASE_URL = '/api/v1/get-room-by-id-or-slug-name'; 
+
+  it('should find a room by a valid 24-character MongoDB ID', async () => {
+    const validMongoId = '507f1f77bcf86cd799439011'; 
+    
+    const mockRoom = { 
+      _id: validMongoId, 
+      room_name: 'Test Room',
+      room_images: [],
+      created_by: { 
+        _id: 'u1', 
+        userName: 'tester',
+        fullName: 'Test User',
+        email: 'test@test.com',
+        phone: '123',
+        avatar: '/a.png',
+        gender: 'male',
+        role: 'admin'
+      }
+    };
+    
+    Room.findById.mockReturnValue({
+      populate: jest.fn().mockResolvedValue(mockRoom)
+    });
+
+    const res = await request(app).get(`${BASE_URL}/${validMongoId}`); 
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.result.data.id).toBe(validMongoId);
+  });
+
+  it('should find a room by Slug if the string is NOT a 24-char ID', async () => {
+    const slug = 'luxury-ocean-view';
+    
+    const mockRoom = { 
+      _id: 'some-id', 
+      room_slug: slug, 
+      room_images: [],
+      created_by: { _id: 'u1', avatar: '/a.png' } 
+    };
+
+    Room.findOne.mockReturnValue({
+      populate: jest.fn().mockResolvedValue(mockRoom)
+    });
+
+    const res = await request(app).get(`${BASE_URL}/${slug}`);
+    
+    expect(res.statusCode).toBe(200);
+    expect(res.body.result.data.room_slug).toBe(slug);
+  });
+
+  it('should return 404 if the room is not found in DB', async () => {
+    Room.findOne.mockReturnValue({
+      populate: jest.fn().mockResolvedValue(null)
+    });
+
+    const res = await request(app).get(`${BASE_URL}/random-slug`);
+
+    expect(res.statusCode).toBe(404);
+    expect(res.body.result.error).toBe('Room does not exist');
+  });
+});
