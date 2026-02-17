@@ -32,5 +32,6 @@
     "linebreak-style": "off",
     "func-names": "off",
     "camelcase": "off"
+    
   }
 }
