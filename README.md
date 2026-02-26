@@ -67,7 +67,6 @@ cd admin-panel
 npm start    # Runs on http://localhost:3033
 ```
 
-
 ## 🛡️ Testing
 
 ### Backend Testing
