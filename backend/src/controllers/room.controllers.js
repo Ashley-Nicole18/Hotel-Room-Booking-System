@@ -264,11 +264,10 @@ exports.getRoomsList = async (req, res) => {
       }
     ));
   } catch (error) {
-    res.status(500).json(errorResponse(
-      2,
-      'SERVER SIDE ERROR',
-      error
-    ));
+    res.status(500).json({
+      status: 'SERVER SIDE ERROR',
+      message: error.message
+    });
   }
 };
 

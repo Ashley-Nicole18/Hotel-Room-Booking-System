@@ -10,7 +10,9 @@
 const mongoose = require('mongoose');
 const logger = require('../middleware/winston.logger');
 
-const connectionString = process.env.MONGO_URI;
+const connectionString = process.env.NODE_ENV === 'test'
+  ? process.env.MONGO_URI_TEST
+  : process.env.MONGO_URI;
 mongoose.set('strictQuery', false);
 
 const connectDatabase = async () => {

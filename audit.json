@@ -1,0 +1,16 @@
+{
+    "keepSettings": {
+        "type": 2,
+        "amount": 10
+    },
+    "auditFilename": "audit.json",
+    "hashType": "md5",
+    "extension": "",
+    "files": [
+        {
+            "date": 1772112167747,
+            "name": "c:\\Users\\Ashley Nicole\\Documents\\SCHOOL\\2nd_Year_2nd_Sem\\Testing\\Booking-System-Api-Testing\\Hotel-Room-Booking-System\\backend\\logs\\access\\access-2026-02-26.log",
+            "hash": "1c77ddf109765522201102c1f4b41543"
+        }
+    ]
+}
