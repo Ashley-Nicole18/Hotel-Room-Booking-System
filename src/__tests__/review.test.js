@@ -1,7 +1,7 @@
 const request = require('supertest');
-const app = require('../app');
-const Review = require('../models/review.modal.js');
 const mongoose = require('mongoose');
+const app = require('../app');
+const Review = require('../models/review.modal');
 
 describe('GET/ room reviews list', () => {
   it('happy path: should fetch reviews for a room', async () => {
