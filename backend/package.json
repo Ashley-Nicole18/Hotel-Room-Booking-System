@@ -8,7 +8,7 @@
         "dev": "NODE_ENV=development nodemon server.js",
         "prod": "NODE_ENV=production node server.js",
         "lint": "eslint .",
-        "test": "set NODE_ENV=test&& jest --forceExit",
+        "test": "set NODE_ENV=test&& jest --runInBand --forceExit",
         "coverage": "npm run test --coverage --watchAll"
     },
     "repository": {
