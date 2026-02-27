@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Room = require('../../models/room.model.js');
+const Room = require('../models/room.model.js');
 
 async function clearDatabase() {
 	const collections = Object.keys(mongoose.connection.collections);

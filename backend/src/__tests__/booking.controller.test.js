@@ -15,7 +15,7 @@ const Booking = require('../models/booking.model.js');
 const request = require('supertest')
 const mongoose = require('mongoose')
 const app = require('../app/index.js')
-const { clearDatabase, connectTestDB, disconnectTestDB } = require('./utils/setup.util.js');
+const { clearDatabase, connectTestDB, disconnectTestDB } = require('../utils/setup.util.js');
 
 describe('place booking order', () => {
     beforeAll(async () => await connectTestDB());
