@@ -44,7 +44,4 @@ audit.json
 # Environment files
 .env.test
 
-# Project folders to ignore
-admin-panel/
-backend/
-frontend/
+
