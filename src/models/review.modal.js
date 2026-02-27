@@ -9,7 +9,7 @@
 
 const mongoose = require('mongoose');
 
-const bookingSchema = new mongoose.Schema({
+const reviewSchema = new mongoose.Schema({
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Users',
@@ -46,9 +46,9 @@ const bookingSchema = new mongoose.Schema({
 });
 
 // updatedAt' field before saving or updating a document
-bookingSchema.pre('save', function (next) {
+reviewSchema.pre('save', function (next) {
   this.updatedAt = new Date();
   next();
 });
 
-module.exports = mongoose.model('Reviews', bookingSchema);
+module.exports = mongoose.model('Review', reviewSchema);

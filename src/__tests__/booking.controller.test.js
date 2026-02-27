@@ -15,12 +15,12 @@ const Booking = require('../models/booking.model.js');
 const request = require('supertest')
 const mongoose = require('mongoose')
 const app = require('../app/index.js')
+const { clearDatabase, connectTestDB, disconnectTestDB } = require('./utils/setup.js');
 
 describe('place booking order', () => {
-
-    beforeEach(() => {
-        jest.clearAllMocks();   
-    })
+    beforeAll(async () => await connectTestDB());
+    beforeEach(async () => await clearDatabase());
+    afterAll(async () => await disconnectTestDB());
 
     it('should place booking order successfully', async () => {
     const roomId = new mongoose.Types.ObjectId().toHexString();

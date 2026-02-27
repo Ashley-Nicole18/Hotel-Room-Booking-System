@@ -111,49 +111,39 @@ exports.roomReviewAdd = async (req, res) => {
 // TODO: controller for get an room reviews list
 exports.getRoomReviewsList = async (req, res) => {
   try {
-    // finding by a review by id
-    let myReviews = null;
+    const { room_id } = req.params;
 
-    if (/^[0-9a-fA-F]{24}$/.test(req.params.room_id)) {
-      myReviews = await Review.find({ room_id: req.params.room_id })
-        .populate('user_id');
-    } else {
+    // 1. Validate Room ID
+    if (!/^[0-9a-fA-F]{24}$/.test(room_id)) {
       return res.status(400).json(errorResponse(
-        1,
-        'FAILED',
-        'Something went wrong. Probably booking id missing/incorrect'
+        1, 'FAILED', 'Invalid Room ID format'
       ));
     }
 
-    // check review available
-    if (!myReviews) {
-      return res.status(404).json(errorResponse(
-        4,
-        'UNKNOWN ACCESS',
-        'Review does not exist'
-      ));
-    }
+    const totalReviewsForRoom = await Review.countDocuments({ room_id });
 
-    // filtering reviews based on different types query
-    const reviewQuery = new MyQueryHelper(Review.find({ room_id: req.params.room_id })
-      .populate('user_id'), req.query)
+    const reviewQuery = new MyQueryHelper(
+      Review.find({ room_id }).populate('user_id'), 
+      req.query
+    )
       .sort()
       .paginate();
+
     const findReviews = await reviewQuery.query;
 
-    const mapperReviews = findReviews?.map((data) => ({
-      id: data?.id,
-      rating: data?.rating,
-      message: data?.message,
-      room_id: data?.room_id,
-      booking_id: data?.booking_id,
+    const mapperReviews = findReviews.map((data) => ({
+      id: data._id,
+      rating: data.rating,
+      message: data.message,
+      room_id: data.room_id,
+      booking_id: data.booking_id,
       reviews_by: {
-        id: data?.user_id?._id,
-        userName: data?.user_id?.userName,
-        fullName: data?.user_id?.fullName,
+        id: data.user_id?._id,
+        userName: data.user_id?.userName,
+        fullName: data.user_id?.fullName,
+        avatar: data.user_id?.avatar ? process.env.APP_BASE_URL + data.user_id.avatar : null,
         email: data?.user_id?.email,
         phone: data?.user_id?.phone,
-        avatar: process.env.APP_BASE_URL + data?.user_id?.avatar,
         gender: data?.user_id?.gender,
         dob: data?.user_id?.dob,
         address: data?.user_id?.address,
@@ -168,24 +158,23 @@ exports.getRoomReviewsList = async (req, res) => {
     }));
 
     // success response with the reviews list
+    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(req.query.page) || 1;
+
     res.status(200).json(successResponse(
       0,
       'SUCCESS',
       'Reviews list retrieved successful',
       {
         rows: mapperReviews,
-        total_rows: myReviews.length,
+        total_rows: totalReviewsForRoom,
         response_rows: findReviews.length,
-        total_page: req?.query?.keyword ? Math.ceil(findReviews.length / req.query.limit) : Math.ceil(myReviews.length / req.query.limit),
-        current_page: req?.query?.page ? parseInt(req.query.page, 10) : 1
+        total_page: Math.ceil(totalReviewsForRoom / limit),
+        current_page: page
       }
     ));
   } catch (error) {
-    res.status(500).json(errorResponse(
-      2,
-      'SERVER SIDE ERROR',
-      error
-    ));
+    res.status(500).json(errorResponse(2, 'SERVER SIDE ERROR', error.message));
   }
 };
 

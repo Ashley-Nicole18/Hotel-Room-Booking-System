@@ -11,3 +11,9 @@ beforeEach(async () => {
 afterAll(async () => {
     await disconnectTestDB();
 })
+
+module.exports = {
+    connectTestDB,
+    clearDatabase,
+    disconnectTestDB
+}
