@@ -3,12 +3,17 @@ const app = require('../app/index.js');
 const Room = require('../models/room.model.js');
 const mongoose = require('mongoose')
 const MyQueryHelper = require('../configs/api.feature.js');
+const { clearDatabase, connectTestDB, disconnectTestDB } = require('./utils/setup.js');
+
 
 jest.mock('../models/room.model.js');
 jest.mock('../configs/api.feature.js');
 
 
 describe('get all rooms list (mocked)', () => {
+  beforeAll(async () => await connectTestDB());
+  beforeEach(async () => await clearDatabase());
+  afterAll(async () => await disconnectTestDB());
 
   it('should return all rooms successfully', async() => {
     const mockRooms = [{
@@ -84,10 +89,9 @@ describe('get all rooms list (mocked)', () => {
 });
 
 describe('getRoomByIdOrSlugName Controller', () => {
-  
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
+  beforeAll(async () => await connectTestDB());
+  beforeEach(async () => await clearDatabase());
+  afterAll(async () => await disconnectTestDB());
 
   const BASE_URL = '/api/v1/get-room-by-id-or-slug-name'; 
 

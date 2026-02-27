@@ -2,14 +2,13 @@ const request = require('supertest');
 const mongoose = require('mongoose');
 const app = require('../app');
 const Review = require('../models/review.modal');
-
+const { clearDatabase, connectTestDB, disconnectTestDB } = require('./utils/setup.js');
 const User = require('../models/user.model'); 
 
 describe('GET/ room reviews list', () => {
-  beforeEach(async () => {
-    await User.deleteMany({});
-    await Review.deleteMany({});
-  });
+  beforeAll(async () => await connectTestDB());
+    beforeEach(async () => await clearDatabase());
+    afterAll(async () => await disconnectTestDB());
 
   it('happy path: should fetch reviews for a room', async () => {
     const mockUser = await User.create({
@@ -41,7 +40,8 @@ describe('GET/ room reviews list', () => {
       }
     ]);
 
-    const res = await request(app).get(`/api/v1/get-room-reviews-list/${roomId}`);
+    const res = await request(app)
+    .get(`/api/v1/get-room-reviews-list/${roomId}?limit=10&page=1`);
 
     expect(res.statusCode).toEqual(200);
     expect(res.body).toBeDefined();
@@ -53,7 +53,7 @@ describe('GET/ room reviews list', () => {
   it('sad path: should return 200 with empty list when no reviews exist for a room', async () => {
     const roomId = new mongoose.Types.ObjectId();
 
-    const res = await request(app).get(`/api/v1/get-room-reviews-list/${roomId}?limit=10&page=1`);
+  const res = await request(app).get(`/api/v1/get-room-reviews-list/${roomId}`);
 
     expect(res.statusCode).toEqual(200);
     expect(res.body).toBeDefined();
