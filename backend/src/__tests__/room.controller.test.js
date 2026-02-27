@@ -3,7 +3,7 @@ const app = require('../app/index.js');
 const Room = require('../models/room.model.js');
 const mongoose = require('mongoose')
 const MyQueryHelper = require('../configs/api.feature.js');
-const { clearDatabase, connectTestDB, disconnectTestDB } = require('./utils/setup.js');
+const { clearDatabase, connectTestDB, disconnectTestDB } = require('./utils/setup.util.js');
 
 
 jest.mock('../models/room.model.js');

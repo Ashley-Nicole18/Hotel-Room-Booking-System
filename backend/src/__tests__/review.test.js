@@ -2,7 +2,7 @@ const request = require('supertest');
 const mongoose = require('mongoose');
 const app = require('../app');
 const Review = require('../models/review.modal');
-const { clearDatabase, connectTestDB, disconnectTestDB } = require('./utils/setup.js');
+const { clearDatabase, connectTestDB, disconnectTestDB } = require('./utils/setup.util.js');
 const User = require('../models/user.model'); 
 
 describe('GET/ room reviews list', () => {
